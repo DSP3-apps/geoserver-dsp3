@@ -101,9 +101,9 @@ function community_config() {
         s3_config
         echo "Installing ${ext} "
         install_plugin /community_plugins "${ext}"
-        if [[ ! -f ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/ehcache-3.4.0.jar ]];then
+        if [[ ! -f ${CATALINA_HOME}/webapps/data-services/WEB-INF/lib/ehcache-3.4.0.jar ]];then
           validate_url https://repo1.maven.org/maven2/org/ehcache/ehcache/3.4.0/ehcache-3.4.0.jar && \
-          mv ehcache-3.4.0.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+          mv ehcache-3.4.0.jar ${CATALINA_HOME}/webapps/data-services/WEB-INF/lib/
         fi
 
     elif [[ ${ext} != 's3-geotiff-plugin' ]]; then
@@ -203,14 +203,14 @@ if [[ ${POSTGRES_JNDI} =~ [Tt][Rr][Uu][Ee] ]];then
     POSTGRES_PORT=5432
     export POSTGRES_PORT="${POSTGRES_PORT}"
   fi
-  POSTGRES_JAR_COUNT=$(ls -1 ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/postgresql-* 2>/dev/null | wc -l)
+  POSTGRES_JAR_COUNT=$(ls -1 ${CATALINA_HOME}/webapps/data-services/WEB-INF/lib/postgresql-* 2>/dev/null | wc -l)
   if [ "$POSTGRES_JAR_COUNT" != 0 ]; then
-    rm "${CATALINA_HOME}"/webapps/geoserver/WEB-INF/lib/postgresql-*
+    rm "${CATALINA_HOME}"/webapps/data-services/WEB-INF/lib/postgresql-*
   fi
   cp "${CATALINA_HOME}"/postgres_config/postgresql-* "${CATALINA_HOME}"/lib/ &&
   envsubst < /build_data/context.xml > "${CATALINA_HOME}"/conf/context.xml
 else
-  cp "${CATALINA_HOME}"/postgres_config/postgresql-* "${CATALINA_HOME}"/webapps/geoserver/WEB-INF/lib/
+  cp "${CATALINA_HOME}"/postgres_config/postgresql-* "${CATALINA_HOME}"/webapps/data-services/WEB-INF/lib/
 fi
 
 

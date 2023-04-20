@@ -43,7 +43,7 @@ fi
 
 USERS_XML=${USERS_XML:-${GEOSERVER_DATA_DIR}/security/usergroup/default/users.xml}
 ROLES_XML=${ROLES_XML:-${GEOSERVER_DATA_DIR}/security/role/default/roles.xml}
-CLASSPATH=${CLASSPATH:-${GEOSERVER_INSTALL_DIR}/webapps/geoserver/WEB-INF/lib/}
+CLASSPATH=${CLASSPATH:-${GEOSERVER_INSTALL_DIR}/webapps/data-services/WEB-INF/lib/}
 
 # users.xml setup
 cp $USERS_XML $USERS_XML.orig
