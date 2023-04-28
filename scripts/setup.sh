@@ -112,15 +112,15 @@ if ls /tmp/resources/plugins/*.zip >/dev/null 2>&1; then
   done
 fi
 
-# Download appropriate gdal-jar
-GDAL_VERSION=$(gdalinfo --version | head -n1 | cut -d" " -f2)
-if [[ ${GDAL_VERSION:0:3} == 3.2 ]];then
-  echo "gdal versions are the same"
-else
-  rm /usr/local/tomcat/webapps/data-services/WEB-INF/lib/gdal-*
-  validate_url https://repo1.maven.org/maven2/org/gdal/gdal/${GDAL_VERSION:0:3}.0/gdal-${GDAL_VERSION:0:3}.0.jar \
-  '-O "${GEOSERVER_HOME}"/webapps/data-services/WEB-INF/lib/gdal-${GDAL_VERSION:0:3}.0.jar'
-fi
+# # Download appropriate gdal-jar
+# GDAL_VERSION=$(gdalinfo --version | head -n1 | cut -d" " -f2)
+# if [[ ${GDAL_VERSION:0:3} == 3.2 ]];then
+#   echo "gdal versions are the same"
+# else
+#   rm /usr/local/tomcat/webapps/data-services/WEB-INF/lib/gdal-*
+#   validate_url https://repo1.maven.org/maven2/org/gdal/gdal/${GDAL_VERSION:0:3}.0/gdal-${GDAL_VERSION:0:3}.0.jar \
+#   '-O "${GEOSERVER_HOME}"/webapps/data-services/WEB-INF/lib/gdal-${GDAL_VERSION:0:3}.0.jar'
+# fi
 
 
 # Install Marlin render https://www.geocat.net/docs/geoserver-enterprise/2020.5/install/production/marlin.html

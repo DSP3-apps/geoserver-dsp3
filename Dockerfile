@@ -1,9 +1,9 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-ARG IMAGE_VERSION=9.0-jdk11-openjdk-slim-bullseye
-ARG JAVA_HOME=/usr/local/openjdk-11
+ARG IMAGE_VERSION=9.0.73-jdk11-temurin-focal
+ARG JAVA_HOME=/opt/java/openjdk
 FROM tomcat:$IMAGE_VERSION
 
-LABEL maintainer="Tim Sutton<tim@linfiniti.com>"
+LABEL maintainer="Ricardo Noguera<ricardo.noguera@telespazio.com>"
 ARG GS_VERSION=2.18.0
 ARG WAR_URL=https://downloads.sourceforge.net/project/geoserver/GeoServer/${GS_VERSION}/geoserver-${GS_VERSION}-war.zip
 ARG STABLE_PLUGIN_BASE_URL=https://sonik.dl.sourceforge.net
@@ -22,16 +22,13 @@ RUN set -eux; \
         locales gnupg2 wget ca-certificates rpl pwgen software-properties-common  iputils-ping \
         apt-transport-https curl gettext fonts-cantarell lmodern ttf-aenigma \
         ttf-bitstream-vera ttf-sjfonts tv-fonts  libapr1-dev libssl-dev  \
-        wget zip unzip curl xsltproc certbot  cabextract gettext postgresql-client figlet vim; \
-    # Install gdal3 - bullseye doesn't build libgdal-java anymore so we can't upgrade
-    curl https://deb.meteo.guru/velivole-keyring.asc |  apt-key add - \
-    && echo "deb https://deb.meteo.guru/debian buster main" > /etc/apt/sources.list.d/meteo.guru.list \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install gdal-bin libgdal-java; \
+        wget zip unzip curl xsltproc certbot  cabextract gettext postgresql-client figlet vim \
+        gdal-bin libgdal-java; \
     dpkg-divert --local --rename --add /sbin/initctl \
     && (echo "Yes, do as I say!" | apt-get remove --force-yes login) \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean
+    
+    # && rm -rf /var/lib/apt/lists/*
 
 ENV \
     JAVA_HOME=${JAVA_HOME} \
