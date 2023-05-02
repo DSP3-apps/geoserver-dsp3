@@ -314,7 +314,7 @@ if [[ ${SSL} =~ [Tt][Rr][Uu][Ee] ]]; then
 
 else
     cp "${CATALINA_HOME}"/conf/ssl-tomcat.xsl "${CATALINA_HOME}"/conf/ssl-tomcat_no_https.xsl
-    sed -i -e '83,126d' "${CATALINA_HOME}"/conf/ssl-tomcat_no_https.xsl
+    sed -i -e '96,138d' "${CATALINA_HOME}"/conf/ssl-tomcat_no_https.xsl
     SSL_CONF=${CATALINA_HOME}/conf/ssl-tomcat_no_https.xsl
 
 fi # End SSL settings
@@ -401,11 +401,16 @@ if [ -n "$JKS_STORE_PASSWORD" ]; then
   JKS_STORE_PASSWORD_PARAM="--stringparam https.keyPass $JKS_STORE_PASSWORD "
 fi
 
+HTTP_RELAX_CHARS="--stringparam http.relaxedPathChars {}[]\| "
+HTTP_RELAX_QUERY="--stringparam http.relaxedQueryChars {}[]\| "
+
 transform="xsltproc \
   --output ${CATALINA_HOME}/conf/server.xml \
   $HTTP_PORT_PARAM \
   $HTTP_PROXY_NAME_PARAM \
   $HTTP_PROXY_PORT_PARAM \
+  $HTTP_RELAX_CHARS \
+  $HTTP_RELAX_QUERY\
   $HTTP_REDIRECT_PORT_PARAM \
   $HTTP_CONNECTION_TIMEOUT_PARAM \
   $HTTP_COMPRESSION_PARAM \

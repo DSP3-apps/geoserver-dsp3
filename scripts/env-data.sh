@@ -376,5 +376,5 @@ fi
 
 if [ -z "${GEOSERVER_CONTEXT_ROOT}" ]; then
   # For runtime only, do not change at build-time.
-  GEOSERVER_CONTEXT_ROOT=geoserver
+  GEOSERVER_CONTEXT_ROOT=data-services
 fi

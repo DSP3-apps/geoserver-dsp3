@@ -6,6 +6,8 @@
     <xsl:param name="http.port"/>
     <xsl:param name="http.proxyName"/>
     <xsl:param name="http.proxyPort"/>
+    <xsl:param name="http.relaxedPathChars"/>
+    <xsl:param name="http.relaxedQueryChars"/>
     <xsl:param name="http.redirectPort"/>
     <xsl:param name="http.connectionTimeout"/>
     <xsl:param name="http.compression"/>
@@ -49,6 +51,16 @@
             <xsl:if test="$http.proxyPort">
                 <xsl:attribute name="proxyPort">
                     <xsl:value-of select="$http.proxyPort"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$http.relaxedPathChars">
+                <xsl:attribute name="relaxedPathChars">
+                    <xsl:value-of select="$http.relaxedPathChars"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:if test="$http.relaxedQueryChars">
+                <xsl:attribute name="relaxedQueryChars">
+                    <xsl:value-of select="$http.relaxedQueryChars"/>
                 </xsl:attribute>
             </xsl:if>
             <xsl:if test="$http.redirectPort">
