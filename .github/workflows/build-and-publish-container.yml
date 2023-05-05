@@ -19,7 +19,7 @@ on:
 env:
   REGISTRY: dsp3tpz.azurecr.io
   # IMAGE_NAME: ${{ github.repository }}
-  IMAGE_NAME: geoserver-rpa-ingest
+  IMAGE_NAME: geoserver
 
 jobs:
   build_and_publish:
