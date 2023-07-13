@@ -62,4 +62,4 @@ jobs:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           options: -p 8000:8080
           run: |
-            curl http://localhost:8080/data-services/gsr/services/?f=json
+            curl http://localhost:8000/data-services/gsr/services/?f=json
