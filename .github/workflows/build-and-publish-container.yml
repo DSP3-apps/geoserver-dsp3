@@ -20,6 +20,7 @@ env:
   REGISTRY: dsp3tpz.azurecr.io
   # IMAGE_NAME: ${{ github.repository }}
   IMAGE_NAME: geoserver
+  TEST_TAG: dsp3tpz.azurecr.io/geoserver:test
 
 jobs:
   build_and_publish:
@@ -48,7 +49,20 @@ jobs:
             type=schedule
             type=ref,event=branch
             type=ref,event=tag
-            type=ref,event=pr 
+            type=ref,event=pr
+      - name: Build and export to Docker test
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: ${{ env.TEST_TAG }}            
+      - name: Test
+        run: |
+          docker run --rm -d -p 8080:8080 ${{ env.TEST_TAG }}
+          date
+          sleep 60
+          date
+          curl http://localhost:8080/data-services/gsr/services/q?f=json
       - name: Build and push Docker image
         uses: docker/build-push-action@v4.0.0
         with:
@@ -56,12 +70,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: Run the build process with Docker
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          options: -p 8080:8080
-      - name: wget
-        uses: wei/wget@v1
-        with:
-          args: http://localhost:8080/data-services/gsr/services/?f=json
