@@ -59,9 +59,7 @@ jobs:
       - name: Test
         run: |
           docker run --rm -d -p 8080:8080 ${{ env.TEST_TAG }}
-          date
-          sleep 60
-          date
+          sleep 180
           curl http://localhost:8080/data-services/gsr/services/q?f=json
       - name: Build and push Docker image
         uses: docker/build-push-action@v4.0.0
