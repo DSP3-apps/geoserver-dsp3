@@ -59,10 +59,7 @@ jobs:
       - name: Run the build process with Docker
         uses: addnab/docker-run-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          image: geoserver:latest
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           options: -p 8000:8080
           run: |
             curl http://localhost:8080/data-services/gsr/services/?f=json
