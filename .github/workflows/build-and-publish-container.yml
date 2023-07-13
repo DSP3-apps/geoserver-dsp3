@@ -60,6 +60,8 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          options: -p 8000:8080
-          run: |
-            curl http://localhost:8000/data-services/gsr/services/?f=json
+          options: -p 8080:8080
+      - name: wget
+        uses: wei/wget@v1
+        with:
+          args: http://localhost:8080/data-services/gsr/services/?f=json
