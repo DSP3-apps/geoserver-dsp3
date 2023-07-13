@@ -58,7 +58,7 @@ jobs:
           tags: ${{ env.TEST_TAG }}            
       - name: Test
         run: |
-          docker run --rm -d -p 8080:8080 ${{ env.TEST_TAG }}
+          docker run --rm -d -p 8080:8080 -e COMMUNITY_EXTENSIONS=gsr-plugin,geopkg-plugin,ogcapi-plugin -e STABLE_EXTENSIONS=ogr-wfs-plugin ${{ env.TEST_TAG }}
           ./test.sh
       - name: Build and push Docker image
         uses: docker/build-push-action@v4.0.0
