@@ -87,6 +87,7 @@ export GEOSERVER_OPTS="-Djava.awt.headless=true -server -Xms${INITIAL_MEMORY} -X
        -DGEOSERVER_CONSOLE_DISABLED=${DISABLE_WEB_INTERFACE} \
        -DGEOSERVER_CSRF_WHITELIST=${CSRF_WHITELIST} \
        -Dgeoserver.xframe.shouldSetPolicy=${XFRAME_OPTIONS} \
+       -Dgeoserver.xframe.policy=\"ALLOW-FROM https://arcgis.com\" \
        ${ADDITIONAL_JAVA_STARTUP_OPTIONS} "
 
 ## Prepare the JVM command line arguments
