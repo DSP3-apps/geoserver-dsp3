@@ -58,15 +58,22 @@ function delete_folder() {
 # Function to add custom crs in geoserver data directory
 # https://docs.geoserver.org/latest/en/user/configuration/crshandling/customcrs.html
 function setup_custom_crs() {
-  if [[ ! -f ${GEOSERVER_DATA_DIR}/user_projections/epsg.properties ]]; then
-    # If it doesn't exists, copy from ${EXTRA_CONFIG_DIR} directory if exists
+    # If it exists, copy from ${EXTRA_CONFIG_DIR} directory if exists
     if [[ -f ${EXTRA_CONFIG_DIR}/epsg.properties ]]; then
-      cp -f "${EXTRA_CONFIG_DIR}"/epsg.properties "${GEOSERVER_DATA_DIR}"/user_projections/
+       cp -f "${EXTRA_CONFIG_DIR}"/epsg.properties "${GEOSERVER_DATA_DIR}"/user_projections/
     else
       # default values
-      cp -r "${CATALINA_HOME}"/data/user_projections/epsg.properties "${GEOSERVER_DATA_DIR}"/user_projections/epsg.properties
+      if [[ ! -f ${GEOSERVER_DATA_DIR}/user_projections/epsg.properties ]]; then
+        cp -r "${CATALINA_HOME}"/data/user_projections/epsg.properties "${GEOSERVER_DATA_DIR}"/user_projections/epsg.properties
+      fi
     fi
-  fi
+}
+
+function setup_custom_override_crs() {
+    # If it doesn't exists, copy from ${EXTRA_CONFIG_DIR} directory if exists
+    if [[ -f ${EXTRA_CONFIG_DIR}/epsg_overrides.properties ]]; then
+      cp -f "${EXTRA_CONFIG_DIR}"/epsg_overrides.properties"${GEOSERVER_DATA_DIR}"/user_projections/
+    fi
 }
 
 # Function to enable cors support thought tomcat
@@ -78,13 +85,21 @@ function web_cors() {
       cp -f "${EXTRA_CONFIG_DIR}"/web.xml  "${CATALINA_HOME}"/conf/
     else
       # default values
-      cp /build_data/web.xml "${CATALINA_HOME}"/conf/
+      envsubst < /build_data/web.xml > "${CATALINA_HOME}"/conf/web.xml
       ###
       # Deactivate CORS filter in web.xml if DISABLE_CORS=true
       # Useful if CORS is handled outside of Tomcat (e.g. in a proxying webserver like nginx)
       ###
       if [[ "${DISABLE_CORS}" =~ [Tt][Rr][Uu][Ee] ]]; then
         sed -i 's/<!-- CORS_START.*/<!-- CORS DEACTIVATED BY DISABLE_CORS -->\n<!--/; s/^.*<!-- CORS_END -->/-->/' \
+          ${CATALINA_HOME}/conf/web.xml
+      fi
+      ###
+      # Deactivate security filter in web.xml if DISABLE_SECURITY_FILTER=true
+      # https://github.com/kartoza/docker-geoserver/issues/549
+      ###
+      if [[ "${DISABLE_SECURITY_FILTER}" =~ [Tt][Rr][Uu][Ee] ]]; then
+        sed -i 's/<!-- SECURITY_START.*/<!-- SECURITY FILTER DEACTIVATED BY DISABLE_SECURITY_FILTER -->\n<!--/; s/^.*<!-- SECURITY_END -->/-->/' \
           ${CATALINA_HOME}/conf/web.xml
       fi
     fi
@@ -139,12 +154,12 @@ function detect_install_dir() {
 
 function unzip_geoserver() {
   if [[ -f /tmp/geoserver/geoserver.war ]]; then
-    unzip /tmp/geoserver/geoserver.war -d "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT} &&
-    validate_geo_install "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT} && \
-    cp -r "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}/data "${CATALINA_HOME}" &&
-    mv "${CATALINA_HOME}"/data/security "${CATALINA_HOME}" &&
-    rm -rf "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}/data &&
-    mv "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}/WEB-INF/lib/postgresql-* "${CATALINA_HOME}"/postgres_config/ &&
+    unzip /tmp/geoserver/geoserver.war -d "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}
+    validate_geo_install "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}
+    cp -r "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}/data "${CATALINA_HOME}"
+    mv "${CATALINA_HOME}"/data/security "${CATALINA_HOME}"
+    rm -rf "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}/data
+    mv "${CATALINA_HOME}"/webapps/${GEOSERVER_CONTEXT_ROOT}/WEB-INF/lib/postgresql-* "${CATALINA_HOME}"/postgres_config/
     rm -rf /tmp/geoserver
 else
     cp -r /tmp/geoserver/* "${GEOSERVER_HOME}"/ && \
@@ -253,6 +268,15 @@ function broker_xml_config() {
   fi
 }
 
+function s3_config() {
+  cat >"${GEOSERVER_DATA_DIR}"/s3.properties <<EOF
+alias.s3.endpoint=${S3_SERVER_URL}
+alias.s3.user=${S3_USERNAME}
+alias.s3.password=${S3_PASSWORD}
+EOF
+
+}
+
 # Helper function to configure s3 bucket
 # https://docs.geoserver.org/latest/en/user/community/s3-geotiff/index.html
 # Remove this based on https://www.mail-archive.com/geoserver-users@lists.sourceforge.net/msg34214.html
@@ -344,7 +368,6 @@ function setup_logging() {
 
 function geoserver_logging() {
 
-  if [[ ! -f ${GEOSERVER_DATA_DIR}/logging.xml ]];then
     echo "
 <logging>
   <level>${GEOSERVER_LOG_LEVEL}</level>
@@ -353,7 +376,6 @@ function geoserver_logging() {
 </logging>
 " > "${GEOSERVER_DATA_DIR}"/logging.xml
 
-  fi
   if [[ ! -f ${GEOSERVER_DATA_DIR}/logs/geoserver.log ]];then
     touch "${GEOSERVER_DATA_DIR}"/logs/geoserver.log
   fi

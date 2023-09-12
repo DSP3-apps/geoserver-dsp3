@@ -322,9 +322,6 @@ if [ -z "${ADDITIONAL_JAVA_STARTUP_OPTIONS}" ]; then
     ADDITIONAL_JAVA_STARTUP_OPTIONS=''
 fi
 
-if [ -z "${CSRF_WHITELIST}" ]; then
-    CSRF_WHITELIST=
-fi
 
 if [ -z "${POSTGRES_JNDI}" ]; then
     POSTGRES_JNDI=false
@@ -354,6 +351,13 @@ if [ -z "${DISABLE_CORS}" ]; then
   DISABLE_CORS=false
 fi
 
+if [ -z "${DISABLE_SECURITY_FILTER}" ]; then
+  DISABLE_SECURITY_FILTER=false
+fi
+if [ -z "${ACTIVATE_PROXY_HEADERS}" ]; then
+  ACTIVATE_PROXY_HEADERS=false
+fi
+
 if [ -z "${UPDATE_LOGGING_PROFILES}" ]; then
   UPDATE_LOGGING_PROFILES=false
 fi
@@ -377,4 +381,9 @@ fi
 if [ -z "${GEOSERVER_CONTEXT_ROOT}" ]; then
   # For runtime only, do not change at build-time.
   GEOSERVER_CONTEXT_ROOT=geoserver
+fi
+
+if [ -z "${SHOW_PASSWORD}" ]; then
+  # For runtime only, do not change at build-time.
+  SHOW_PASSWORD=true
 fi
